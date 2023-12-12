@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Immediates","ImmediatesType"],"fn":["bool_to_bytes"],"trait":["ImmediateType","Serialize"]};
