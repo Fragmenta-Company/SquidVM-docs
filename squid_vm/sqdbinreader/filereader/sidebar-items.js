@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["to_string"],"struct":["FileReader"]};
+window.SIDEBAR_ITEMS = {"constant":["SQDBIN"],"fn":["to_string"],"struct":["FileReader"]};

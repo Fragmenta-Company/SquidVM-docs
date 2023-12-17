@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["VMStarter"]};
+window.SIDEBAR_ITEMS = {"fn":["print_any"],"struct":["VMStarter"]};

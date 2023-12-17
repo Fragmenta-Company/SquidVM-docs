@@ -80,7 +80,7 @@
 
 <span class="doccomment">/// Heap implementation
 </span><span class="kw">pub struct </span>VMHeap {
-    heap_memory: Vec&lt;AtomicPtr&lt;AllocatedObject&gt;&gt;,
+    heap_memory: Vec&lt;AtomicPtr&lt;Box&lt;AllocatedObject&gt;&gt;&gt;,
     heap_capacity: usize,
 }
 

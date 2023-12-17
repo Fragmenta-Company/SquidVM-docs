@@ -386,32 +386,40 @@
 <a href="#386" id="386">386</a>
 <a href="#387" id="387">387</a>
 <a href="#388" id="388">388</a>
-<a href="#389" id="389">389</a>
-<a href="#390" id="390">390</a>
-<a href="#391" id="391">391</a>
-<a href="#392" id="392">392</a>
-<a href="#393" id="393">393</a>
-<a href="#394" id="394">394</a>
-<a href="#395" id="395">395</a>
-<a href="#396" id="396">396</a>
-<a href="#397" id="397">397</a>
-<a href="#398" id="398">398</a>
-<a href="#399" id="399">399</a>
-<a href="#400" id="400">400</a>
-<a href="#401" id="401">401</a>
-<a href="#402" id="402">402</a>
-<a href="#403" id="403">403</a>
-<a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::sqdbinreader::FileReader;
 <span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::Immediates::{
     <span class="self">self</span>, Array, Binary, Boolean, Float, Integer, Null, String <span class="kw">as </span>TypeString, UInteger,
 };
 <span class="kw">use </span><span class="kw">crate</span>::vminternals::{VMHeap, VMRepository, VMStack};
+
+<span class="kw">fn </span>print_any(printable: Immediates) {
+    <span class="kw">match </span>printable {
+        Null =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;Null&quot;</span>);
+        }
+        Boolean(b) =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, b);
+        }
+        UInteger(ui) =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, ui);
+        }
+        Integer(i) =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, i);
+        }
+        Float(f) =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, f);
+        }
+        TypeString(s) =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, s);
+        }
+        Binary(bin) =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{:?}&quot;</span>, bin);
+        }
+        Array(arr) =&gt; {
+            <span class="macro">print!</span>(<span class="string">&quot;{:?}&quot;</span>, arr)
+        }
+    }
+}
 
 <span class="doccomment">/// The **VM&#39;s heart**.
 /// Contains _instructions_, _data_,
@@ -491,7 +499,7 @@
         <span class="self">self</span>.instructions = file_reader.instructions;
         <span class="self">self</span>.data_vault = file_reader.data;
 
-        <span class="macro">println!</span>(<span class="string">&quot;Instructions: {:?}&quot;</span>, <span class="self">self</span>.instructions);
+        <span class="macro">dev_print!</span>(<span class="string">&quot;Instructions: {:?}&quot;</span>, <span class="self">self</span>.instructions);
 
         <span class="kw">while </span><span class="self">self</span>.pc &lt; <span class="self">self</span>.instructions.len() {
             <span class="kw">let </span>instruction = <span class="self">self</span>.instructions[<span class="self">self</span>.pc];
@@ -499,7 +507,7 @@
             <span class="self">self</span>.instruction = instruction;
             <span class="self">self</span>.pc += <span class="number">1</span>;
             <span class="self">self</span>.instructor(instruction);
-            <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.pc);
+            <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.pc);
             <span class="comment">// println!(&quot;Length: {}&quot;, self.heap.heap_memory.len());
         </span>}
 
@@ -517,49 +525,49 @@
     </span><span class="kw">fn </span>instructor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, instruction: u8) {
         <span class="kw">match </span>instruction {
             <span class="number">0x00 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ HALT ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ HALT ]&quot;</span>);
                 <span class="self">self</span>.running = <span class="bool-val">false</span>;
             }
             <span class="number">0x01 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ iADD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ iADD ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
                 <span class="kw">if let </span>(Integer(v1a), Integer(v2a)) = (v1, v2) {
-                    <span class="macro">println!</span>(<span class="string">&quot;{} {}&quot;</span>, v1a, v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{} {}&quot;</span>, v1a, v2a);
 
-                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, v1a + v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, v1a + v2a);
                     <span class="self">self</span>.stack.push(Integer(v1a + v2a));
                 } <span class="kw">else </span>{
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
             <span class="number">0x02 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ iSUB ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ iSUB ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
                 <span class="kw">if let </span>(Integer(v1a), Integer(v2a)) = (v1, v2) {
-                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, v1a - v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, v1a - v2a);
                     <span class="self">self</span>.stack.push(Integer(v1a - v2a));
                 } <span class="kw">else </span>{
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
             <span class="number">0x03 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ iMUL ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ iMUL ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
                 <span class="kw">if let </span>(Integer(v1a), Integer(v2a)) = (v1, v2) {
-                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, v1a * v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, v1a * v2a);
                     <span class="self">self</span>.stack.push(Integer(v1a * v2a));
                 } <span class="kw">else </span>{
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
             <span class="number">0x04 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ iDVD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ iDVD ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
@@ -574,7 +582,7 @@
                 }
             }
             <span class="number">0x05 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ FiDVD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ FiDVD ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
@@ -585,13 +593,13 @@
                 }
             }
             <span class="number">0x06 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ fADD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ fADD ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
                 <span class="kw">if let </span>(Float(v1a), Float(v2a)) = (v1, v2) {
-                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, v1a + v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, v1a + v2a);
 
                     <span class="self">self</span>.stack.push(Float(v1a + v2a));
                 } <span class="kw">else </span>{
@@ -599,13 +607,13 @@
                 }
             }
             <span class="number">0x07 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ fSUB ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ fSUB ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
                 <span class="kw">if let </span>(Float(v1a), Float(v2a)) = (v1, v2) {
-                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, v1a - v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, v1a - v2a);
 
                     <span class="self">self</span>.stack.push(Float(v1a - v2a));
                 } <span class="kw">else </span>{
@@ -613,13 +621,13 @@
                 }
             }
             <span class="number">0x08 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ fMUL ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ fMUL ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
                 <span class="kw">if let </span>(Float(v1a), Float(v2a)) = (v1, v2) {
-                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, v1a * v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, v1a * v2a);
 
                     <span class="self">self</span>.stack.push(Float(v1a * v2a));
                 } <span class="kw">else </span>{
@@ -627,13 +635,13 @@
                 }
             }
             <span class="number">0x09 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ fDVD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ fDVD ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
 
                 <span class="kw">if let </span>(Float(v1a), Float(v2a)) = (v1, v2) {
-                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, v1a / v2a);
+                    <span class="macro">dev_print!</span>(<span class="string">&quot;{}&quot;</span>, v1a / v2a);
 
                     <span class="self">self</span>.stack.push(Float(v1a / v2a));
                 } <span class="kw">else </span>{
@@ -641,19 +649,19 @@
                 }
             }
             <span class="number">0x0A </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ PDTS ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ PDTS ]&quot;</span>);
 
                 <span class="kw">let </span>pdts = <span class="kw-2">&amp;</span><span class="self">self</span>.data;
 
                 <span class="self">self</span>.stack.push(pdts.clone());
             }
             <span class="number">0x0B </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ PDFS ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ PDFS ]&quot;</span>);
 
                 <span class="self">self</span>.data = <span class="self">self</span>.stack.pop();
             }
             <span class="number">0x0C </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ JMPFD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ JMPFD ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(i) = <span class="self">self</span>.data {
                     <span class="self">self</span>.pc = i <span class="kw">as </span>usize;
@@ -662,7 +670,7 @@
                 }
             }
             <span class="number">0x0D </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ JMPFS ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ JMPFS ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(i) = <span class="self">self</span>.stack.pop() {
                     <span class="self">self</span>.pc = i <span class="kw">as </span>usize;
@@ -671,16 +679,16 @@
                 }
             }
             <span class="number">0x0E </span>=&gt; {
-                <span class="macro">print!</span>(<span class="string">&quot;[ PRTFS ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTFS ]&quot;</span>);
 
                 <span class="kw">if let </span>TypeString(s) = <span class="self">self</span>.stack.pop() {
-                    <span class="macro">println!</span>(<span class="string">&quot;{s}&quot;</span>);
+                    <span class="macro">print!</span>(<span class="string">&quot;{s}&quot;</span>);
                 } <span class="kw">else </span>{
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO STRING ]&quot;</span>);
                 }
             }
             <span class="number">0x0F </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ PRTFD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTFD ]&quot;</span>);
 
                 <span class="kw">if let </span>TypeString(s) = <span class="self">self</span>.data.clone() {
                     <span class="macro">print!</span>(<span class="string">&quot;{s}&quot;</span>);
@@ -689,7 +697,7 @@
                 }
             }
             <span class="number">0x10 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ iExp ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ iExp ]&quot;</span>);
 
                 <span class="kw">if let </span>(UInteger(v2), Integer(v1)) = (<span class="self">self</span>.stack.pop(), <span class="self">self</span>.stack.pop()) {
                     <span class="self">self</span>.stack.push(Integer(v1.pow(v2 <span class="kw">as </span>u32)));
@@ -698,7 +706,7 @@
                 }
             }
             <span class="number">0x11 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ fExp ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ fExp ]&quot;</span>);
 
                 <span class="kw">if let </span>(Float(v2), Float(v1)) = (<span class="self">self</span>.stack.pop(), <span class="self">self</span>.stack.pop()) {
                     <span class="self">self</span>.stack.push(Float(v1.powf(v2)));
@@ -707,7 +715,7 @@
                 }
             }
             <span class="number">0x12 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ fiExp ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ fiExp ]&quot;</span>);
 
                 <span class="kw">if let </span>(Integer(v2), Float(v1)) = (<span class="self">self</span>.stack.pop(), <span class="self">self</span>.stack.pop()) {
                     <span class="self">self</span>.stack.push(Float(v1.powi(v2 <span class="kw">as </span>i32)));
@@ -716,67 +724,17 @@
                 }
             }
             <span class="number">0x13 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ PRTAFD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTAFD ]&quot;</span>);
 
-                <span class="kw">match </span><span class="self">self</span>.data.clone() {
-                    Null =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;Null&quot;</span>);
-                    }
-                    Boolean(b) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, b);
-                    }
-                    UInteger(ui) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, ui);
-                    }
-                    Integer(i) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, i);
-                    }
-                    Float(f) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, f);
-                    }
-                    TypeString(s) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, s);
-                    }
-                    Binary(bin) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{:?}&quot;</span>, bin);
-                    }
-                    Array(arr) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{:?}&quot;</span>, arr)
-                    }
-                }
+                print_any(<span class="self">self</span>.data.clone());
             }
             <span class="number">0x14 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ PRTAFS ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTAFS ]&quot;</span>);
 
-                <span class="kw">match </span><span class="self">self</span>.stack.pop() {
-                    Null =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;Null&quot;</span>);
-                    }
-                    Boolean(b) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, b);
-                    }
-                    UInteger(ui) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, ui);
-                    }
-                    Integer(i) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, i);
-                    }
-                    Float(f) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, f);
-                    }
-                    TypeString(s) =&gt; {
-                        <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, s);
-                    }
-                    Binary(bin) =&gt; {
-                        <span class="macro">println!</span>(<span class="string">&quot;{:?}&quot;</span>, bin);
-                    }
-                    Array(arr) =&gt; {
-                        <span class="macro">print!</span>(<span class="string">&quot;{:?}&quot;</span>, arr)
-                    }
-                }
+                print_any(<span class="self">self</span>.stack.pop());
             }
             <span class="number">0x15 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ AVP ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ AVP ]&quot;</span>);
 
                 <span class="kw">let </span>var_pointer = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>var_name = <span class="self">self</span>.stack.pop();
@@ -793,7 +751,7 @@
                 }
             }
             <span class="number">0x16 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ dVFD ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ dVFD ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(var_name) = <span class="self">self</span>.data {
                     <span class="macro">println!</span>(<span class="string">&quot;Pointer: {}&quot;</span>, <span class="self">self</span>.repository.get_var(var_name <span class="kw">as </span>usize));
@@ -802,7 +760,7 @@
                 }
             }
             <span class="number">0x17 </span>=&gt; {
-                <span class="macro">println!</span>(<span class="string">&quot;[ dVFS ]&quot;</span>);
+                <span class="macro">dev_print!</span>(<span class="string">&quot;[ dVFS ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(var_name) = <span class="self">self</span>.stack.pop() {
                     <span class="macro">println!</span>(<span class="string">&quot;Pointer: {}&quot;</span>, <span class="self">self</span>.repository.get_var(var_name <span class="kw">as </span>usize));

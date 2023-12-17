@@ -274,6 +274,18 @@
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::Immediates::{
     <span class="self">self</span>, Boolean, Float, Integer, Null, String <span class="kw">as </span>TypeString, UInteger,
 };
@@ -281,6 +293,8 @@
 <span class="kw">use </span>std::fs::File;
 <span class="kw">use </span>std::io::{Read, Seek, SeekFrom};
 <span class="kw">use </span>std::{fs, process};
+
+<span class="kw">const </span>SQDBIN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;.sqdbin&quot;</span>;
 
 <span class="doccomment">/// Holds all the instructions and data that
 /// the VM will use in order to function properly.
@@ -311,7 +325,15 @@
     /// For example, if the instruction is for adding to the stack,
     /// it will probably contain some data info, like Integers,
     /// Strings, Floats or even Null values.
-    </span><span class="kw">pub fn </span>new(file_location: String) -&gt; FileReader {
+    </span><span class="kw">pub fn </span>new(<span class="kw-2">mut </span>file_location: String) -&gt; FileReader {
+        <span class="kw">if </span>file_location.ends_with(<span class="string">&#39;\\&#39;</span>) || file_location.ends_with(<span class="string">&#39;/&#39;</span>) {
+            file_location.pop();
+        }
+
+        <span class="kw">if </span>!file_location.ends_with(SQDBIN) {
+            file_location.push_str(SQDBIN);
+        }
+
         <span class="kw">let </span><span class="kw-2">mut </span>instructions: Vec&lt;u8&gt; = Vec::new();
         <span class="kw">let </span><span class="kw-2">mut </span>data: Vec&lt;Immediates&gt; = Vec::new();
         <span class="kw">let </span>file = File::open(file_location.clone());
@@ -347,9 +369,11 @@
                 <span class="kw">break</span>;
             }
 
-            <span class="macro">println!</span>(
+            <span class="macro">dev_print!</span>(
                 <span class="string">&quot;Cursor: {}, Buffer: {:?}, Counter: {}&quot;</span>,
-                crsr, buffer, counter
+                crsr,
+                buffer,
+                counter
             );
             <span class="comment">//
             // println!(&quot;Idk&quot;);
