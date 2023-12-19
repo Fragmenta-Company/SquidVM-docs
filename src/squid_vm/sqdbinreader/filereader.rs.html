@@ -405,27 +405,6 @@
 <a href="#405" id="405">405</a>
 <a href="#406" id="406">406</a>
 <a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a>
-<a href="#410" id="410">410</a>
-<a href="#411" id="411">411</a>
-<a href="#412" id="412">412</a>
-<a href="#413" id="413">413</a>
-<a href="#414" id="414">414</a>
-<a href="#415" id="415">415</a>
-<a href="#416" id="416">416</a>
-<a href="#417" id="417">417</a>
-<a href="#418" id="418">418</a>
-<a href="#419" id="419">419</a>
-<a href="#420" id="420">420</a>
-<a href="#421" id="421">421</a>
-<a href="#422" id="422">422</a>
-<a href="#423" id="423">423</a>
-<a href="#424" id="424">424</a>
-<a href="#425" id="425">425</a>
-<a href="#426" id="426">426</a>
-<a href="#427" id="427">427</a>
-<a href="#428" id="428">428</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::Immediates::{
     <span class="self">self</span>, Boolean, Float, Integer, Null, String <span class="kw">as </span>TypeString, UInteger,
 };
@@ -470,7 +449,7 @@
     /// For example, if the instruction is for adding to the stack,
     /// it will probably contain some data info, like Integers,
     /// Strings, Floats or even Null values.
-    </span><span class="kw">pub fn </span>new(<span class="kw-2">mut </span>file_location: String, filearg:bool) -&gt; FileReader {
+    </span><span class="kw">pub fn </span>new(<span class="kw-2">mut </span>file_location: String, filearg: bool) -&gt; FileReader {
         <span class="kw">if </span>file_location.ends_with(<span class="string">&#39;\\&#39;</span>) || file_location.ends_with(<span class="string">&#39;/&#39;</span>) {
             file_location.pop();
         }
@@ -511,18 +490,14 @@
             };
 
             <span class="kw">if </span>filearg {
-
                 <span class="kw">match </span>buffer[<span class="number">0</span>] {
                     <span class="number">1 </span>=&gt; {
-
                         offset += <span class="number">1</span>;
 
                         crsr = file.seek(SeekFrom::Start(offset)).unwrap();
 
                         <span class="kw">let </span>major = <span class="kw">match </span>file.read_u32::&lt;LittleEndian&gt;() {
-                            <span class="prelude-val">Ok</span>(byte) =&gt; {
-                                byte
-                            }
+                            <span class="prelude-val">Ok</span>(byte) =&gt; byte,
                             <span class="prelude-val">Err</span>(err) =&gt; {
                                 <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
                                 <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
@@ -530,12 +505,10 @@
                             }
                         };
 
-                        offset+=<span class="number">4</span>;
+                        offset += <span class="number">4</span>;
 
                         <span class="kw">let </span>minor = <span class="kw">match </span>file.read_u16::&lt;LittleEndian&gt;() {
-                            <span class="prelude-val">Ok</span>(byte) =&gt; {
-                                byte
-                            }
+                            <span class="prelude-val">Ok</span>(byte) =&gt; byte,
                             <span class="prelude-val">Err</span>(err) =&gt; {
                                 <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
                                 <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
@@ -543,19 +516,19 @@
                             }
                         };
 
-                        offset+=<span class="number">2</span>;
+                        offset += <span class="number">2</span>;
 
                         <span class="kw">let </span>patch = <span class="kw">if let </span><span class="prelude-val">Ok</span>(bytes) = file.read_u16::&lt;LittleEndian&gt;() {
                             bytes
                         } <span class="kw">else if let </span><span class="prelude-val">Err</span>(err) = file.read_u16::&lt;LittleEndian&gt;() {
-                                <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
-                                <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
-                                process::exit(<span class="number">2</span>);
+                            <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
+                            <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
+                            process::exit(<span class="number">2</span>);
                         } <span class="kw">else </span>{
                             <span class="macro">unreachable!</span>()
                         };
 
-                        offset+=<span class="number">2</span>;
+                        offset += <span class="number">2</span>;
 
                         <span class="kw">let </span>details = <span class="kw">if let </span><span class="prelude-val">Ok</span>(byte) = file.read_u8() {
                             byte
@@ -572,9 +545,7 @@
 
                         <span class="kw">while </span>counter &lt; <span class="number">22 </span>{
                             byte_string.push(<span class="kw">match </span>file.read_u8() {
-                                <span class="prelude-val">Ok</span>(int) =&gt; {
-                                    int
-                                }
+                                <span class="prelude-val">Ok</span>(int) =&gt; int,
                                 <span class="prelude-val">Err</span>(err) =&gt; {
                                     <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
                                     <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
@@ -588,31 +559,23 @@
                         offset += <span class="number">1</span>;
 
                         <span class="kw">let </span>details = <span class="kw">match </span>details {
-                            <span class="number">0 </span>=&gt; {
-                                <span class="string">&quot;Release&quot;
-                            </span>}
-                            <span class="number">1 </span>=&gt; {
-                                <span class="string">&quot;Alpha&quot;
-                            </span>}
-                            <span class="number">2 </span>=&gt; {
-                                <span class="string">&quot;Beta&quot;
-                            </span>}
-                            <span class="kw">_ </span>=&gt; {
-                                <span class="string">&quot;Unknown&quot;
-                            </span>}
+                            <span class="number">0 </span>=&gt; <span class="string">&quot;Release&quot;</span>,
+                            <span class="number">1 </span>=&gt; <span class="string">&quot;Alpha&quot;</span>,
+                            <span class="number">2 </span>=&gt; <span class="string">&quot;Beta&quot;</span>,
+                            <span class="kw">_ </span>=&gt; <span class="string">&quot;Unknown&quot;</span>,
                         };
 
-                        <span class="kw">let </span>version = <span class="macro">format!</span>(<span class="string">&quot;Compatible with {}.{}.{}-{} and up until next major&quot;</span>,
-                        major, minor, patch, details);
+                        <span class="kw">let </span>version = <span class="macro">format!</span>(
+                            <span class="string">&quot;Compatible with {}.{}.{}-{} and up until next major&quot;</span>,
+                            major, minor, patch, details
+                        );
 
                         <span class="macro">println!</span>(<span class="string">&quot;{version}&quot;</span>);
                         <span class="macro">println!</span>(<span class="string">&quot;\x1B[31mIn alpha and beta versions the VM will change a lot, so most things will change.&quot;</span>);
                         <span class="macro">println!</span>(<span class="string">&quot;Binaries for SquidVM 0.7.0-alpha and up will not be compatible with old versions\x1b[0m&quot;</span>);
 
                         <span class="kw">let </span>compiler = <span class="kw">match </span>String::from_utf8(byte_string) {
-                            <span class="prelude-val">Ok</span>(string) =&gt; {
-                                string
-                            }
+                            <span class="prelude-val">Ok</span>(string) =&gt; string,
                             <span class="prelude-val">Err</span>(err) =&gt; {
                                 <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
                                 <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
@@ -623,7 +586,6 @@
                         <span class="macro">println!</span>(<span class="string">&quot;Compiled with: {compiler}&quot;</span>);
 
                         file.read_exact(<span class="kw-2">&amp;mut </span>buffer).expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
-
                     }
                     <span class="kw">_ </span>=&gt; {
                         <span class="macro">println!</span>(<span class="string">&quot;File doesn&#39;t include metadata!&quot;</span>);
@@ -631,18 +593,14 @@
                 }
 
                 process::exit(<span class="number">0</span>);
-
             }
 
             <span class="kw">if </span>counter &lt; <span class="number">1 </span>&amp;&amp; buffer[<span class="number">0</span>] == <span class="number">1 </span>{
-
-                offset+=<span class="number">32</span>;
+                offset += <span class="number">32</span>;
 
                 crsr = file.seek(SeekFrom::Start(offset)).unwrap();
 
                 file.read_exact(<span class="kw-2">&amp;mut </span>buffer).expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
-
-
             }
 
             <span class="kw">if </span>counter &gt; <span class="number">1 </span>&amp;&amp; crsr == <span class="number">0 </span>{

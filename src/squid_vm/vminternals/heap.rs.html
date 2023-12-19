@@ -100,17 +100,8 @@
 <a href="#100" id="100">100</a>
 <a href="#101" id="101">101</a>
 <a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::mem;
-<span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::<span class="kw-2">*</span>;
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::<span class="kw-2">*</span>;
+<span class="kw">use </span>std::mem;
 <span class="kw">use </span>std::sync::atomic::{AtomicPtr, Ordering};
 <span class="attr">#[allow(unused_imports)]
 </span><span class="kw">use </span>Colors::{Black, Gray, White};
@@ -168,7 +159,6 @@
     }
 
     <span class="kw">pub fn </span>malloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: Immediates) -&gt; Allocation {
-
         <span class="kw">let </span>serialized = data.serialize_heap();
 
         <span class="macro">println!</span>(<span class="string">&quot;Size: {}&quot;</span>, mem::size_of_val(<span class="kw-2">&amp;</span>serialized));
@@ -181,7 +171,7 @@
 
         <span class="kw">let </span>pointer = Box::into_raw(object);
 
-        <span class="kw">let </span>size = mem::size_of_val( <span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>pointer });
+        <span class="kw">let </span>size = mem::size_of_val(<span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>pointer });
 
         <span class="kw">let </span>malloc = Allocation {
             index: <span class="self">self</span>.heap_memory.len(),
@@ -194,20 +184,15 @@
         <span class="macro">dev_print!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="self">self</span>.heap_memory);
 
         malloc
-
     }
 
     <span class="kw">pub fn </span>get_obj(<span class="kw-2">&amp;mut </span><span class="self">self</span>, address: usize) -&gt; AllocatedObject {
-
-
         <span class="comment">// let obj = self.heap_memory[address].as_ptr();
 
-        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.heap_memory[address].load(Ordering::Relaxed).read()}
-
+        </span><span class="kw">unsafe </span>{ <span class="self">self</span>.heap_memory[address].load(Ordering::Relaxed).read() }
     }
 
     <span class="kw">pub fn </span>free(<span class="kw-2">&amp;mut </span><span class="self">self</span>, alloc: Allocation) {
-
         <span class="macro">dev_print!</span>(<span class="string">&quot;Alloc Index: {}&quot;</span>, <span class="kw-2">&amp;</span>alloc.index);
         <span class="macro">dev_print!</span>(<span class="string">&quot;Alloc Size: {}&quot;</span>, <span class="kw-2">&amp;</span>alloc.size);
         <span class="macro">dev_print!</span>(<span class="string">&quot;Alloc Type: {:?}&quot;</span>, <span class="kw-2">&amp;</span>alloc.immediate_type);
@@ -215,9 +200,6 @@
         <span class="self">self</span>.heap_memory.swap_remove(alloc.index);
 
         drop(alloc);
-
     }
-
-
 }
 </code></pre></div></section></main></body></html>
