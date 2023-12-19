@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["main"],"macro":["dev_print"],"mod":["sarreader","sqdbinreader","vminternals"],"struct":["Args"]};
+window.SIDEBAR_ITEMS = {"fn":["main","string_to_bytesize"],"macro":["dev_print"],"mod":["sarreader","sqdbinreader","vminternals"],"struct":["Args"]};
