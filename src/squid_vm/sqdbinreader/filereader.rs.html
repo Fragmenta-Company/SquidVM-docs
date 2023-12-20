@@ -398,23 +398,16 @@
 <a href="#398" id="398">398</a>
 <a href="#399" id="399">399</a>
 <a href="#400" id="400">400</a>
-<a href="#401" id="401">401</a>
-<a href="#402" id="402">402</a>
-<a href="#403" id="403">403</a>
-<a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::Immediates::{
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::errdef::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::instructiondefs::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::sqdbinreader::defs::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::Immediates::{
     <span class="self">self</span>, Boolean, Float, Integer, Null, String <span class="kw">as </span>TypeString, UInteger,
 };
 <span class="kw">use </span>byteorder::{LittleEndian, ReadBytesExt};
 <span class="kw">use </span>std::fs::File;
-<span class="kw">use </span>std::io::{Read, Seek, SeekFrom};
+<span class="kw">use </span>std::io::{Error, Read, Seek, SeekFrom};
 <span class="kw">use </span>std::{fs, process};
-
-<span class="doccomment">/// .sqdbin file extension.
-</span><span class="kw">const </span>SQDBIN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;.sqdbin&quot;</span>;
 
 <span class="doccomment">/// Holds all the instructions and data that
 /// the VM will use in order to function properly.
@@ -465,7 +458,7 @@
             <span class="prelude-val">Ok</span>(file) =&gt; file,
             <span class="prelude-val">Err</span>(error) =&gt; {
                 <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31m{}\x1b[0m&quot;</span>, error);
-                process::exit(<span class="number">2</span>);
+                process::exit(FILE_DATA_ERR);
             }
         };
 
@@ -479,79 +472,54 @@
         </span><span class="kw">loop </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>crsr = file.seek(SeekFrom::Start(offset)).unwrap();
 
-            <span class="kw">let </span><span class="kw-2">mut </span>buffer = [<span class="number">0u8</span>, <span class="number">0u8</span>];
+            <span class="kw">let </span><span class="kw-2">mut </span>buffer = [<span class="number">0u8</span>; <span class="number">2</span>];
 
             <span class="kw">match </span>file.read_exact(<span class="kw-2">&amp;mut </span>buffer) {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31m{}\x1b[0m&quot;</span>, e);
-                    process::exit(<span class="number">2</span>);
+                    process::exit(FILE_DATA_ERR);
                 }
             };
 
             <span class="kw">if </span>filearg {
+                <span class="kw">fn </span>error_handler&lt;T&gt;(res: <span class="prelude-ty">Result</span>&lt;T, Error&gt;) -&gt; T {
+                    <span class="kw">match </span>res {
+                        <span class="prelude-val">Ok</span>(byte) =&gt; byte,
+                        <span class="prelude-val">Err</span>(err) =&gt; {
+                            <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
+                            <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
+                            process::exit(METADATA_ERR);
+                        }
+                    }
+                }
+
                 <span class="kw">match </span>buffer[<span class="number">0</span>] {
-                    <span class="number">1 </span>=&gt; {
-                        offset += <span class="number">1</span>;
+                    <span class="comment">// File has metadata
+                    </span><span class="number">1 </span>=&gt; {
+                        offset += METADATA_IDENTIFIER_BYTE;
 
                         crsr = file.seek(SeekFrom::Start(offset)).unwrap();
 
-                        <span class="kw">let </span>major = <span class="kw">match </span>file.read_u32::&lt;LittleEndian&gt;() {
-                            <span class="prelude-val">Ok</span>(byte) =&gt; byte,
-                            <span class="prelude-val">Err</span>(err) =&gt; {
-                                <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
-                                <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
-                                process::exit(<span class="number">2</span>);
-                            }
-                        };
+                        <span class="kw">let </span>major = error_handler(file.read_u32::&lt;LittleEndian&gt;());
 
-                        offset += <span class="number">4</span>;
+                        offset += MAJOR_SIZE;
 
-                        <span class="kw">let </span>minor = <span class="kw">match </span>file.read_u16::&lt;LittleEndian&gt;() {
-                            <span class="prelude-val">Ok</span>(byte) =&gt; byte,
-                            <span class="prelude-val">Err</span>(err) =&gt; {
-                                <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
-                                <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
-                                process::exit(<span class="number">2</span>);
-                            }
-                        };
+                        <span class="kw">let </span>minor = error_handler(file.read_u16::&lt;LittleEndian&gt;());
 
-                        offset += <span class="number">2</span>;
+                        offset += MINOR_PATCH_SIZE;
 
-                        <span class="kw">let </span>patch = <span class="kw">if let </span><span class="prelude-val">Ok</span>(bytes) = file.read_u16::&lt;LittleEndian&gt;() {
-                            bytes
-                        } <span class="kw">else if let </span><span class="prelude-val">Err</span>(err) = file.read_u16::&lt;LittleEndian&gt;() {
-                            <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
-                            <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
-                            process::exit(<span class="number">2</span>);
-                        } <span class="kw">else </span>{
-                            <span class="macro">unreachable!</span>()
-                        };
+                        <span class="kw">let </span>patch = error_handler(file.read_u16::&lt;LittleEndian&gt;());
 
-                        offset += <span class="number">2</span>;
+                        offset += MINOR_PATCH_SIZE;
 
-                        <span class="kw">let </span>details = <span class="kw">if let </span><span class="prelude-val">Ok</span>(byte) = file.read_u8() {
-                            byte
-                        } <span class="kw">else if let </span><span class="prelude-val">Err</span>(err) = file.read_u8() {
-                            <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
-                            <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
-                            process::exit(<span class="number">2</span>);
-                        } <span class="kw">else </span>{
-                            <span class="macro">unreachable!</span>()
-                        };
+                        <span class="kw">let </span>details = error_handler(file.read_u8());
 
-                        <span class="kw">let </span><span class="kw-2">mut </span>counter = <span class="number">0</span>;
+                        <span class="kw">let </span><span class="kw-2">mut </span>counter: u32 = <span class="number">0</span>;
                         <span class="kw">let </span><span class="kw-2">mut </span>byte_string = <span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">6</span>];
 
-                        <span class="kw">while </span>counter &lt; <span class="number">22 </span>{
-                            byte_string.push(<span class="kw">match </span>file.read_u8() {
-                                <span class="prelude-val">Ok</span>(int) =&gt; int,
-                                <span class="prelude-val">Err</span>(err) =&gt; {
-                                    <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
-                                    <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
-                                    process::exit(<span class="number">2</span>);
-                                }
-                            });
+                        <span class="kw">while </span>counter &lt; COMPILER_NAME_SIZE {
+                            byte_string.push(error_handler(file.read_u8()));
                             offset += <span class="number">1</span>;
                             counter += <span class="number">1</span>;
                         }
@@ -579,7 +547,7 @@
                             <span class="prelude-val">Err</span>(err) =&gt; {
                                 <span class="macro">dev_print!</span>(<span class="string">&quot;Error: {:?}&quot;</span>, err);
                                 <span class="macro">eprintln!</span>(<span class="string">&quot;\x1B[31mINVALID FILE METADATA!\x1b[0m&quot;</span>);
-                                process::exit(<span class="number">2</span>);
+                                process::exit(METADATA_ERR);
                             }
                         };
 
@@ -587,7 +555,8 @@
 
                         file.read_exact(<span class="kw-2">&amp;mut </span>buffer).expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
                     }
-                    <span class="kw">_ </span>=&gt; {
+                    <span class="comment">// File does not have metadata
+                    </span><span class="kw">_ </span>=&gt; {
                         <span class="macro">println!</span>(<span class="string">&quot;File doesn&#39;t include metadata!&quot;</span>);
                     }
                 }
@@ -595,8 +564,10 @@
                 process::exit(<span class="number">0</span>);
             }
 
-            <span class="kw">if </span>counter &lt; <span class="number">1 </span>&amp;&amp; buffer[<span class="number">0</span>] == <span class="number">1 </span>{
-                offset += <span class="number">32</span>;
+            <span class="comment">// Jumps the header if the counter is less than one and
+            // if the file has a 0x01 as it&#39;s first byte.
+            </span><span class="kw">if </span>counter &lt; <span class="number">1 </span>&amp;&amp; buffer[<span class="number">0</span>] == METADATA_IDENTIFIER_BYTE <span class="kw">as </span>u8 {
+                offset += HEADER_SIZE;
 
                 crsr = file.seek(SeekFrom::Start(offset)).unwrap();
 
@@ -617,66 +588,68 @@
             // println!(&quot;Idk&quot;);
 
             </span><span class="kw">match </span>buffer[<span class="number">0</span>] {
-                <span class="number">0x00 </span>=&gt; {
+                HALT =&gt; {
                     <span class="comment">// println!(&quot;Idk&quot;);
                     </span>instructions.push(<span class="number">0x00</span>);
                     data.push(Null);
                     <span class="kw">break</span>;
                 }
-                <span class="number">0x01 </span>=&gt; {
+                I_ADD =&gt; {
                     instructions.push(<span class="number">0x01</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x02 </span>=&gt; {
+                I_SUB =&gt; {
                     instructions.push(<span class="number">0x02</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x03 </span>=&gt; {
+                I_MUL =&gt; {
                     instructions.push(<span class="number">0x03</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x04 </span>=&gt; {
+                I_DVD =&gt; {
                     instructions.push(<span class="number">0x04</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x05 </span>=&gt; {
+                F_I_DVD =&gt; {
                     instructions.push(<span class="number">0x05</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x06 </span>=&gt; {
+                F_ADD =&gt; {
                     instructions.push(<span class="number">0x06</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x07 </span>=&gt; {
+                F_SUB =&gt; {
                     instructions.push(<span class="number">0x07</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x08 </span>=&gt; {
+                F_MUL =&gt; {
                     instructions.push(<span class="number">0x08</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x09 </span>=&gt; {
+                F_DVD =&gt; {
                     instructions.push(<span class="number">0x09</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;
                 }
-                <span class="number">0x0A </span>=&gt; {
+                PDTS =&gt; {
                     instructions.push(buffer[<span class="number">0</span>]);
                     <span class="kw">match </span>buffer[<span class="number">1</span>] {
                         <span class="number">0x00 </span>=&gt; {
-                            data.push(Null);
+                            <span class="comment">// Null Type
+                            </span>data.push(Null);
                             offset += <span class="number">2</span>;
                         }
                         <span class="number">0x01 </span>=&gt; {
-                            file.read_exact(<span class="kw-2">&amp;mut </span>buffer).expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
+                            <span class="comment">// Boolean type
+                            </span>file.read_exact(<span class="kw-2">&amp;mut </span>buffer).expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
                             data.push(Boolean(<span class="kw">if </span>buffer[<span class="number">1</span>] == <span class="number">1 </span>{
                                 <span class="bool-val">true
                             </span>} <span class="kw">else if </span>buffer[<span class="number">1</span>] == <span class="number">0 </span>{
@@ -687,28 +660,32 @@
                             offset += <span class="number">2</span>;
                         }
                         <span class="number">0x02 </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// Integer type
+                            </span>offset += <span class="number">2</span>;
                             data.push(Integer(
                                 file.read_i64::&lt;LittleEndian&gt;().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>),
                             ));
                             offset += <span class="number">8</span>;
                         }
                         <span class="number">0x03 </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// Unsigned Integer type
+                            </span>offset += <span class="number">2</span>;
                             data.push(UInteger(
                                 file.read_u64::&lt;LittleEndian&gt;().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>),
                             ));
                             offset += <span class="number">8</span>;
                         }
                         <span class="number">0x04 </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// Float type
+                            </span>offset += <span class="number">2</span>;
                             data.push(Float(
                                 file.read_f64::&lt;LittleEndian&gt;().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>),
                             ));
                             offset += <span class="number">8</span>;
                         }
                         <span class="number">0x0F </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// 8bit type
+                            </span>offset += <span class="number">2</span>;
                             <span class="kw">let </span>int = file.read_u8().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
                             <span class="kw">let </span><span class="kw-2">mut </span>counter = <span class="number">0</span>;
                             offset += <span class="number">1</span>;
@@ -722,7 +699,8 @@
                             data.push(TypeString(to_string(byte_string)));
                         }
                         <span class="number">0x1F </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// 16bit type
+                            </span>offset += <span class="number">2</span>;
                             <span class="kw">let </span>int = file.read_u16::&lt;LittleEndian&gt;().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
                             <span class="kw">let </span><span class="kw-2">mut </span>counter = <span class="number">0</span>;
                             offset += <span class="number">2</span>;
@@ -735,7 +713,8 @@
                             data.push(TypeString(to_string(byte_string)));
                         }
                         <span class="number">0x2F </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// 32bit type
+                            </span>offset += <span class="number">2</span>;
                             <span class="kw">let </span>int = file.read_u32::&lt;LittleEndian&gt;().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
                             <span class="kw">let </span><span class="kw-2">mut </span>counter = <span class="number">0</span>;
                             offset += <span class="number">4</span>;
@@ -748,7 +727,8 @@
                             data.push(TypeString(to_string(byte_string)));
                         }
                         <span class="number">0x3F </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// 64bit type
+                            </span>offset += <span class="number">2</span>;
                             <span class="kw">let </span>int = file.read_u64::&lt;LittleEndian&gt;().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
                             <span class="kw">let </span><span class="kw-2">mut </span>counter = <span class="number">0</span>;
                             offset += <span class="number">8</span>;
@@ -761,7 +741,8 @@
                             data.push(TypeString(to_string(byte_string)));
                         }
                         <span class="number">0x4F </span>=&gt; {
-                            offset += <span class="number">2</span>;
+                            <span class="comment">// 128bit type
+                            </span>offset += <span class="number">2</span>;
                             <span class="kw">let </span>int = file
                                 .read_u128::&lt;LittleEndian&gt;()
                                 .expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
@@ -778,14 +759,19 @@
                         <span class="kw">_ </span>=&gt; {}
                     }
                 }
-                <span class="number">0x0C </span>=&gt; {
+                JMPFD =&gt; {
                     instructions.push(<span class="number">0x0C</span>);
                     offset += <span class="number">1</span>;
                     <span class="kw">let </span>int = file.read_u64::&lt;LittleEndian&gt;().expect(<span class="string">&quot;INVALID FILE DATA!&quot;</span>);
                     data.push(UInteger(int));
                     offset += <span class="number">8</span>;
                 }
-                <span class="number">0x0E </span>=&gt; {
+                JMPFS =&gt; {
+                    instructions.push(<span class="number">0x0D</span>);
+                    data.push(Null);
+                    offset += <span class="number">1</span>;
+                }
+                PRTFS =&gt; {
                     instructions.push(<span class="number">0x0E</span>);
                     data.push(Null);
                     offset += <span class="number">1</span>;

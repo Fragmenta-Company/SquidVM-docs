@@ -401,7 +401,9 @@
 <a href="#401" id="401">401</a>
 <a href="#402" id="402">402</a>
 <a href="#403" id="403">403</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::sqdbinreader::FileReader;
+<a href="#404" id="404">404</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::instructiondefs::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::sqdbinreader::FileReader;
 <span class="kw">use </span><span class="kw">crate</span>::vminternals::immediates::Immediates::{
     <span class="self">self</span>, Array, Binary, Boolean, Float, Integer, Null, String <span class="kw">as </span>TypeString, UInteger,
 };
@@ -554,11 +556,11 @@
     /// **Panics** if instruction is _unknown_.
     </span><span class="kw">fn </span>instructor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, instruction: u8) {
         <span class="kw">match </span>instruction {
-            <span class="number">0x00 </span>=&gt; {
+            HALT =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ HALT ]&quot;</span>);
                 <span class="self">self</span>.running = <span class="bool-val">false</span>;
             }
-            <span class="number">0x01 </span>=&gt; {
+            I_ADD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ iADD ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
@@ -572,7 +574,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
-            <span class="number">0x02 </span>=&gt; {
+            I_SUB =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ iSUB ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
@@ -584,7 +586,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
-            <span class="number">0x03 </span>=&gt; {
+            I_MUL =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ iMUL ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
@@ -596,7 +598,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
-            <span class="number">0x04 </span>=&gt; {
+            I_DVD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ iDVD ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
@@ -611,7 +613,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
-            <span class="number">0x05 </span>=&gt; {
+            F_I_DVD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ FiDVD ]&quot;</span>);
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
                 <span class="kw">let </span>v1 = <span class="self">self</span>.stack.pop();
@@ -622,7 +624,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>);
                 }
             }
-            <span class="number">0x06 </span>=&gt; {
+            F_ADD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ fADD ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
@@ -636,7 +638,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO FLOATS ]&quot;</span>);
                 }
             }
-            <span class="number">0x07 </span>=&gt; {
+            F_SUB =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ fSUB ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
@@ -650,7 +652,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO FLOATS ]&quot;</span>);
                 }
             }
-            <span class="number">0x08 </span>=&gt; {
+            F_MUL =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ fMUL ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
@@ -664,7 +666,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO FLOATS ]&quot;</span>);
                 }
             }
-            <span class="number">0x09 </span>=&gt; {
+            F_DVD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ fDVD ]&quot;</span>);
 
                 <span class="kw">let </span>v2 = <span class="self">self</span>.stack.pop();
@@ -678,19 +680,19 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO FLOATS ]&quot;</span>);
                 }
             }
-            <span class="number">0x0A </span>=&gt; {
+            PDTS =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ PDTS ]&quot;</span>);
 
                 <span class="kw">let </span>pdts = <span class="kw-2">&amp;</span><span class="self">self</span>.data;
 
                 <span class="self">self</span>.stack.push(pdts.clone());
             }
-            <span class="number">0x0B </span>=&gt; {
+            PDFS =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ PDFS ]&quot;</span>);
 
                 <span class="self">self</span>.data = <span class="self">self</span>.stack.pop();
             }
-            <span class="number">0x0C </span>=&gt; {
+            JMPFD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ JMPFD ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(i) = <span class="self">self</span>.data {
@@ -699,7 +701,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ WRONG ADDRESS ]&quot;</span>);
                 }
             }
-            <span class="number">0x0D </span>=&gt; {
+            JMPFS =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ JMPFS ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(i) = <span class="self">self</span>.stack.pop() {
@@ -708,7 +710,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ WRONG ADDRESS ]&quot;</span>);
                 }
             }
-            <span class="number">0x0E </span>=&gt; {
+            PRTFS =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTFS ]&quot;</span>);
 
                 <span class="kw">if let </span>TypeString(s) = <span class="self">self</span>.stack.pop() {
@@ -717,7 +719,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO STRING ]&quot;</span>);
                 }
             }
-            <span class="number">0x0F </span>=&gt; {
+            PRTFD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTFD ]&quot;</span>);
 
                 <span class="kw">if let </span>TypeString(s) = <span class="self">self</span>.data.clone() {
@@ -726,7 +728,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO STRING ]&quot;</span>);
                 }
             }
-            <span class="number">0x10 </span>=&gt; {
+            I_EXP =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ iExp ]&quot;</span>);
 
                 <span class="kw">if let </span>(UInteger(v2), Integer(v1)) = (<span class="self">self</span>.stack.pop(), <span class="self">self</span>.stack.pop()) {
@@ -735,7 +737,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO INTEGERS ]&quot;</span>)
                 }
             }
-            <span class="number">0x11 </span>=&gt; {
+            F_EXP =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ fExp ]&quot;</span>);
 
                 <span class="kw">if let </span>(Float(v2), Float(v1)) = (<span class="self">self</span>.stack.pop(), <span class="self">self</span>.stack.pop()) {
@@ -744,7 +746,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO FLOATS ]&quot;</span>)
                 }
             }
-            <span class="number">0x12 </span>=&gt; {
+            F_I_EXP =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ fiExp ]&quot;</span>);
 
                 <span class="kw">if let </span>(Integer(v2), Float(v1)) = (<span class="self">self</span>.stack.pop(), <span class="self">self</span>.stack.pop()) {
@@ -753,17 +755,17 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ NO FLOATS ]&quot;</span>)
                 }
             }
-            <span class="number">0x13 </span>=&gt; {
+            PRTAFD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTAFD ]&quot;</span>);
 
                 print_any(<span class="self">self</span>.data.clone());
             }
-            <span class="number">0x14 </span>=&gt; {
+            PRTAFS =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ PRTAFS ]&quot;</span>);
 
                 print_any(<span class="self">self</span>.stack.pop());
             }
-            <span class="number">0x15 </span>=&gt; {
+            AVP =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ AVP ]&quot;</span>);
 
                 <span class="kw">let </span>var_pointer = <span class="self">self</span>.stack.pop();
@@ -780,7 +782,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ INVALID VAR NAME ]&quot;</span>);
                 }
             }
-            <span class="number">0x16 </span>=&gt; {
+            D_VFD =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ dVFD ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(var_name) = <span class="self">self</span>.data {
@@ -789,7 +791,7 @@
                     <span class="macro">panic!</span>(<span class="string">&quot;[ WRONG VARIABLE NAME ]&quot;</span>);
                 }
             }
-            <span class="number">0x17 </span>=&gt; {
+            D_VFS =&gt; {
                 <span class="macro">dev_print!</span>(<span class="string">&quot;[ dVFS ]&quot;</span>);
 
                 <span class="kw">if let </span>UInteger(var_name) = <span class="self">self</span>.stack.pop() {

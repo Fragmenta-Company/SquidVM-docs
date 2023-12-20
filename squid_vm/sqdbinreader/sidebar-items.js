@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["filereader"]};
+window.SIDEBAR_ITEMS = {"mod":["defs","filereader"]};
