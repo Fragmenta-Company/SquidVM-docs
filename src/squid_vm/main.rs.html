@@ -102,6 +102,16 @@
 <a href="#102" id="102">102</a>
 <a href="#103" id="103">103</a>
 <a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! &lt;p style=&quot;text-align: center;&quot;&gt;
 //!     &lt;img src=&quot;https://d1drfx3idpovxr.cloudfront.net/squid-vm.svg&quot;
 //!     alt=&quot;SquidVM Logo&quot; width=&quot;250px&quot; /&gt;
@@ -121,7 +131,15 @@
 //!     todo!(); //in this project.
 </span><span class="attr">#![warn(missing_docs)]
 
-</span><span class="doccomment">/// Defines the program macros
+</span><span class="doccomment">/// Changes from SquidVM to SVDK when feature devkit is enabled on compile time.
+</span><span class="attr">#[cfg(feature = <span class="string">&quot;devkit&quot;</span>)]
+</span><span class="kw">const </span>VM_NAMING_CONVENTION:<span class="kw-2">&amp;</span>str = <span class="string">&quot;SquidVM Development Kit&quot;</span>;
+
+<span class="doccomment">/// Changes from SquidVM to SVDK when feature devkit is enabled on compile time.
+</span><span class="attr">#[cfg(not(feature = <span class="string">&quot;devkit&quot;</span>))]
+</span><span class="kw">const </span>VM_NAMING_CONVENTION:<span class="kw-2">&amp;</span>str = <span class="string">&quot;SquidVM&quot;</span>;
+
+<span class="doccomment">/// Defines the program macros
 </span><span class="attr">#[macro_use]
 </span><span class="kw">mod </span>macrodefs;
 
@@ -164,7 +182,9 @@
     <span class="kw">let </span>args = Args::parse();
 
     <span class="kw">if </span>args.version {
-        <span class="macro">println!</span>(<span class="string">&quot;{} {} for {}&quot;</span>, <span class="string">&quot;SquidVM&quot;</span>, <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>), TARGET);
+        <span class="macro">dev_print!</span>(<span class="string">&quot;---- SVDK ---- ---- SVDK ---- SVDK ---- ---- SVDK ----&quot;</span>);
+        <span class="macro">println!</span>(<span class="string">&quot;{} {} for {}&quot;</span>, VM_NAMING_CONVENTION, <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>), TARGET);
+        <span class="macro">dev_print!</span>(<span class="string">&quot;---- SVDK ---- ---- SVDK ---- SVDK ---- ---- SVDK ----&quot;</span>);
         process::exit(<span class="number">0</span>);
     }
 
