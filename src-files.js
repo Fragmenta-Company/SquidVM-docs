@@ -47,7 +47,7 @@ var srcIndex = JSON.parse('{\
 "sha1":["",[["compress",[],["soft.rs","x86.rs"]]],["compress.rs","lib.rs"]],\
 "sha2":["",[["sha256",[],["soft.rs","x86.rs"]],["sha512",[],["soft.rs","x86.rs"]]],["consts.rs","core_api.rs","lib.rs","sha256.rs","sha512.rs"]],\
 "simple_logger":["",[],["lib.rs"]],\
-"squid_vm":["",[["sarreader",[],["archivereader.rs","mod.rs"]],["sqdbinreader",[],["defs.rs","filereader.rs","mod.rs"]],["vminternals",[],["heap.rs","immediates.rs","mod.rs","repository.rs","stack.rs","vm.rs"]]],["argsdef.rs","errdef.rs","instructiondefs.rs","macrodefs.rs","main.rs","targetdef.rs"]],\
+"squid_vm":["",[["sarreader",[],["archivereader.rs","defs.rs","mod.rs"]],["sqdbinreader",[],["defs.rs","filereader.rs","mod.rs"]],["vminternals",[],["heap.rs","immediates.rs","mod.rs","repository.rs","stack.rs","vm.rs"]]],["argsdef.rs","errdef.rs","instructiondefs.rs","macrodefs.rs","main.rs","targetdef.rs"]],\
 "strsim":["",[],["lib.rs"]],\
 "subtle":["",[],["lib.rs"]],\
 "syn":["",[["gen",[],["clone.rs"]]],["attr.rs","bigint.rs","buffer.rs","custom_keyword.rs","custom_punctuation.rs","data.rs","derive.rs","discouraged.rs","drops.rs","error.rs","export.rs","expr.rs","ext.rs","file.rs","gen_helper.rs","generics.rs","group.rs","ident.rs","item.rs","lib.rs","lifetime.rs","lit.rs","lookahead.rs","mac.rs","macros.rs","meta.rs","op.rs","parse.rs","parse_macro_input.rs","parse_quote.rs","pat.rs","path.rs","print.rs","punctuated.rs","restriction.rs","sealed.rs","span.rs","spanned.rs","stmt.rs","thread.rs","token.rs","ty.rs","verbatim.rs","whitespace.rs"]],\

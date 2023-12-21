@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["archivereader"]};
+window.SIDEBAR_ITEMS = {"mod":["archivereader","defs"]};
