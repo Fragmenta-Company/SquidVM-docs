@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="`🗜 presser`"><title>presser - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="presser" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../presser/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a></nav><nav class="sidebar"><a class="logo-container" href="../presser/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate presser</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.3.1</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">presser</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/presser/lib.rs.html#1-786">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="-presser"><a href="#-presser"><code>🗜 presser</code></a></h2>
+<p><strong>Utilities to help make copying data around into raw, possibly-uninitialized buffers
+easier and safer.</strong></p>
+<h3 id="motivation"><a href="#motivation">Motivation</a></h3>
+<p><code>presser</code> can help you when copying data into raw buffers. One primary use-case is copying data into
+graphics-api-allocated buffers which will then be accessed by the GPU. Common methods for doing this
+right now in Rust can often invoke UB in subtle and hard-to-see ways. For example, viewing an allocated
+but uninitialized buffer as an <code>&amp;mut [u8]</code> <strong>is instantly undefined behavior</strong>*, and <code>transmute</code>ing even a
+<code>T: Copy</code> type which has <em>any padding bytes in its layout</em> as a <code>&amp;[u8]</code> to be the source of a copy is
+<strong>also instantly undefined behavior</strong>, in both cases because it is <em>invalid</em> to create a reference to an invalid
+value (and uninitialized memory is an invalid <code>u8</code>), <em>even if</em> your code never actually accesses that memory.
+This immediately makes what seems like the most straightforward way to copy data into buffers unsound 😬.</p>
+<p><code>presser</code> helps with this by allowing you to view raw allocated memory of some size as a “<a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a>” of memory and then
+provides <em>safe, valid</em> ways to copy data into that memory. For example, you could implement <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a> for your
+GPU-allocated buffer type, or use the built-in <a href="struct.RawAllocation.html" title="struct presser::RawAllocation"><code>RawAllocation</code></a> workflow described below, then use
+<a href="fn.copy_to_offset_with_align.html" title="fn presser::copy_to_offset_with_align"><code>copy_to_offset_with_align</code></a> to copy any <code>T: Copy</code> data into that buffer safely for use on the GPU.
+Of course, if your <code>T</code> doesn’t have the correct layout the GPU expects, accessing it on the GPU side may still be
+unsound or at least give an error.</p>
+<p>* <em>If you’re currently thinking to yourself “bah! what’s the issue? surely an uninit u8 is just any random bit pattern
+and that’s fine we don’t care,” <a href="https://www.ralfj.de/blog/2019/07/14/uninit.html">check out this blog post</a> by
+@RalfJung, one of the people leading the effort to better define Rust’s memory and execution model. As is explored
+in that blog post, an <em>uninit</em> piece of memory is not simply <em>an arbitrary bit pattern</em>, it is a wholly separate
+state about a piece of memory, outside of its value, which lets the compiler perform optimizations that reorder,
+delete, and otherwise change the actual execution flow of your program in ways that cannot be described simply
+by “the value could have <em>some</em> possible bit pattern”. LLVM and Clang are changing themselves to require special
+<code>noundef</code> attribute to perform many important optimizations that are otherwise unsound. For a concrete example
+of the sorts of problems this can cause, 
+<a href="https://github.com/rust-lang/rust/pull/98919#issuecomment-1186106387">see this issue @scottmcm hit</a>.</em></p>
+<h3 id="introduction"><a href="#introduction">Introduction</a></h3>
+<p>The main idea is to implement <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a> on raw-buffer-esque-types (see <a href="trait.Slab.html#Safety" title="trait presser::Slab">the <code>Slab</code> safety docs</a>),
+which then enables the use of the other functions within the crate.</p>
+<p>Depending on your use case, you may be able to implement <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a> directly for your buffer type, or it may
+be more convenient or necessary to create a wrapping struct that borrows your raw buffer type and in turn
+implements <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a>. For an example of this, see <a href="struct.RawAllocation.html" title="struct presser::RawAllocation"><code>RawAllocation</code></a> and <a href="struct.BorrowedRawAllocation.html" title="struct presser::BorrowedRawAllocation"><code>BorrowedRawAllocation</code></a>, which you
+may also use directly. The idea is to create a <a href="struct.RawAllocation.html" title="struct presser::RawAllocation"><code>RawAllocation</code></a> to your buffer, which you then borrow into
+a <a href="struct.BorrowedRawAllocation.html" title="struct presser::BorrowedRawAllocation"><code>BorrowedRawAllocation</code></a> (which implements <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a>) by calling the unsafe function
+<a href="struct.RawAllocation.html#method.borrow_as_slab" title="method presser::RawAllocation::borrow_as_slab"><code>RawAllocation::borrow_as_slab</code></a></p>
+<p>Once you have a slab, you can use the copy helper functions provided at the crate root, for example,
+<a href="fn.copy_to_offset.html" title="fn presser::copy_to_offset"><code>copy_to_offset</code></a> and <a href="fn.copy_to_offset_with_align.html" title="fn presser::copy_to_offset_with_align"><code>copy_to_offset_with_align</code></a>.</p>
+<h4 id="example"><a href="#example">Example</a></h4>
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[derive(Clone, Copy)]
+#[repr(C)]
+</span><span class="kw">struct </span>MyDataStruct {
+    a: u8,
+    b: u32,
+}
+
+<span class="kw">let </span>my_data = MyDataStruct { a: <span class="number">0</span>, b: <span class="number">42 </span>};
+
+<span class="comment">// allocate an uninit buffer of some size
+</span><span class="kw">let </span>my_buffer: MyBufferType = some_api.alloc_buffer_size(<span class="number">2048</span>);
+
+<span class="comment">// use `RawAllocation` helper to allow access to a presser `Slab`.
+// alternatively, you could implement the `Slab` on `MyByfferType` directly if that
+// type is owned by your code!
+</span><span class="kw">let </span>raw_allocation = presser::RawAllocation::from_raw_parts(my_buffer.ptr(), my_buffer.size());
+
+<span class="comment">// here we assert that we have exclusive access to the data in the buffer, and get the actual
+// `Slab` to use to copy into.
+</span><span class="kw">let </span>slab = <span class="kw">unsafe </span>{ raw_allocation.borrow_as_slab(); }
+
+<span class="comment">// now we may safely copy `my_data` into `my_buffer`, starting at a minimum offset of 0 into the buffer
+</span><span class="kw">let </span>copy_record = presser::copy_to_offset(<span class="kw-2">&amp;</span>my_data, <span class="kw-2">&amp;mut </span>slab, <span class="number">0</span>)<span class="question-mark">?</span>;
+
+<span class="comment">// note that due to alignment requirements of `my_data`, the *actual* start of the bytes of
+// `my_data` may be placed at a different offset than requested. so, we check the returned
+// `CopyRecord` to check the actual start offset of the copied data.
+</span><span class="kw">let </span>actual_start_offset = copy_record.copy_start_offset;</code></pre></div>
+<h4 id="no_std"><a href="#no_std"><code>#[no_std]</code></a></h4>
+<p>This crate supports <code>no_std</code> environments by building without the ‘<code>std</code>’ feature. This will limit some
+of the fuctions the crate can perform.</p>
+<h2 id="safety"><a href="#safety">Safety</a></h2>
+<p>An important note is that obeying the safety rules specified in the <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a> safety documentation
+<em>only</em> guarantees safety for the <em>direct results</em> of the copy operations performed by the
+helper functions exported at the crate root (and the safe functions on <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a>). <strong>However</strong>,
+it is <em><strong>not</strong></em> guaranteed that operations which would previously have been safe to perform
+using same backing memory that the <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a> you copied into used are still safe.</p>
+<p>For example, say you have a fully-initialized
+chunk of bytes (like a <code>Vec&lt;u8&gt;</code>), which you view as a <a href="trait.Slab.html" title="trait presser::Slab"><code>Slab</code></a>, and then (safely) perform a copy
+operation into using <a href="fn.copy_to_offset.html" title="fn presser::copy_to_offset"><code>copy_to_offset</code></a>. If the <code>T</code> you copied into it has any padding bytes in
+its memory layout, then the memory locations where those padding bytes now exist in the underlying <code>Vec</code>’s
+memory must now be treated as uninitialized. As such, taking any view into that byte vector which
+relies on those newly-uninit bytes being initialized to be valid (for example, taking a <code>&amp;[u8]</code> slice of the <code>Vec</code>
+which includes those bytes, <em><strong>even if your code never actually reads from that slice</strong></em>)
+is now instant <strong>undefined behavior</strong>.</p>
+</div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.BorrowedRawAllocation.html" title="struct presser::BorrowedRawAllocation">BorrowedRawAllocation</a></div><div class="desc docblock-short">Represents the unique borrow of a contiguous piece of a single allocation with some layout that is used as a
+data copying destination. May be wholly or partially uninitialized.</div></li><li><div class="item-name"><a class="struct" href="struct.CopyRecord.html" title="struct presser::CopyRecord">CopyRecord</a></div><div class="desc docblock-short">Record of the results of a copy operation</div></li><li><div class="item-name"><a class="struct" href="struct.RawAllocation.html" title="struct presser::RawAllocation">RawAllocation</a></div><div class="desc docblock-short">Represents a contiguous piece of a single allocation with some layout.
+May be wholly or partially uninitialized.</div></li></ul><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.CopyError.html" title="enum presser::CopyError">CopyError</a></div><div class="desc docblock-short">An error that may occur during a copy operation.</div></li></ul><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Slab.html" title="trait presser::Slab">Slab</a></div><div class="desc docblock-short">Represents a contiguous piece of a single allocation with some layout that is used as a
+data copying destination. May be wholly or partially uninitialized.</div></li></ul><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.clone_into_maybe_uninit_slice.html" title="fn presser::clone_into_maybe_uninit_slice">clone_into_maybe_uninit_slice</a></div><div class="desc docblock-short">Clones the elements from <code>src</code> to <code>dst</code>, returning a mutable reference to the now initialized contents of <code>dst</code>.
+Any already initialized elements will not be dropped.</div></li><li><div class="item-name"><a class="fn" href="fn.copy_from_iter_to_offset_with_align.html" title="fn presser::copy_from_iter_to_offset_with_align">copy_from_iter_to_offset_with_align</a></div><div class="desc docblock-short">Copies from <code>src</code> iterator into the memory represented by <code>dst</code> starting at a minimum location
+of <code>start_offset</code> bytes past the start of <code>dst</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.copy_from_iter_to_offset_with_align_packed.html" title="fn presser::copy_from_iter_to_offset_with_align_packed">copy_from_iter_to_offset_with_align_packed</a></div><div class="desc docblock-short">Like <a href="fn.copy_from_iter_to_offset_with_align.html" title="fn presser::copy_from_iter_to_offset_with_align"><code>copy_from_iter_to_offset_with_align</code></a> except that
+alignment between elements yielded by the iterator will ignore <code>min_alignment</code>
+and rather only be aligned to the alignment of <code>T</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.copy_from_slice_to_offset.html" title="fn presser::copy_from_slice_to_offset">copy_from_slice_to_offset</a></div><div class="desc docblock-short">Copies from <code>slice</code> into the memory represented by <code>dst</code> starting at a minimum location
+of <code>start_offset</code> bytes past the start of <code>self</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.copy_from_slice_to_offset_with_align.html" title="fn presser::copy_from_slice_to_offset_with_align">copy_from_slice_to_offset_with_align</a></div><div class="desc docblock-short">Copies from <code>slice</code> into the memory represented by <code>dst</code> starting at a minimum location
+of <code>start_offset</code> bytes past the start of <code>dst</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.copy_into_maybe_uninit_slice.html" title="fn presser::copy_into_maybe_uninit_slice">copy_into_maybe_uninit_slice</a></div><div class="desc docblock-short">Copies the elements from <code>src</code> to <code>dst</code>, returning a mutable reference to the now initialized contents of <code>dst</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.copy_to_offset.html" title="fn presser::copy_to_offset">copy_to_offset</a></div><div class="desc docblock-short">Copies <code>src</code> into the memory represented by <code>dst</code> starting at a minimum location
+of <code>start_offset</code> bytes past the start of <code>dst</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.copy_to_offset_with_align.html" title="fn presser::copy_to_offset_with_align">copy_to_offset_with_align</a></div><div class="desc docblock-short">Copies <code>src</code> into the memory represented by <code>dst</code> starting at a minimum location
+of <code>start_offset</code> bytes past the start of <code>dst</code> and with minimum alignment
+<code>min_alignment</code>.</div></li><li><div class="item-name"><a class="fn" href="fn.maybe_uninit_slice_from_vec.html" title="fn presser::maybe_uninit_slice_from_vec">maybe_uninit_slice_from_vec</a><sup title="unsafe function">⚠</sup></div><div class="desc docblock-short">Takes a <code>Vec</code> and unsafely resizes it to the given length, returning a mutable slice to <code>MaybeUninit&lt;T&gt;</code> for each
+item in the newly-resized <code>Vec</code>.</div></li></ul></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["CoTaskMemFree","SysFreeString","SysStringLen"],"struct":["HRESULT"],"type":["BSTR","HRESULT","LPCSTR","LPCWSTR","LPSTR","LPWSTR","WCHAR"]};

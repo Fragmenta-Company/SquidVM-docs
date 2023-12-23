@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AllocationError","MemoryLocation"],"mod":["d3d12"],"struct":["AllocationSizes","AllocatorDebugSettings"],"type":["Result"]};

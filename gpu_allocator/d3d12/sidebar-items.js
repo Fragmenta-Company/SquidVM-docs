@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ID3D12DeviceVersion","ResourceCategory","ResourceStateOrBarrierLayout","ResourceType"],"mod":["winapi_d3d12"],"struct":["Allocation","AllocationCreateDesc","Allocator","AllocatorCreateDesc","CommittedAllocationStatistics","Resource","ResourceCreateDesc"],"trait":["ToWinapi","ToWindows"]};

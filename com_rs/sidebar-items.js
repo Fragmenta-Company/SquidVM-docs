@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["com_interface","iid"],"struct":["ComPtr","IID","IUnknown"],"trait":["AsComPtr","ComInterface"],"type":["HResult"]};

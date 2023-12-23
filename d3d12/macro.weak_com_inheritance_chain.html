@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro that allows generation of an easy to use enum for dealing with many different possible versions of a COM object."><title>weak_com_inheritance_chain in d3d12 - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="d3d12" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../d3d12/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a></nav><nav class="sidebar"><a class="logo-container" href="../d3d12/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><div class="sidebar-elems"><h2><a href="index.html">In d3d12</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">d3d12</a>::<wbr><a class="macro" href="#">weak_com_inheritance_chain</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/d3d12/com.rs.html#138-259">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules! </span>weak_com_inheritance_chain {
+    (
+        $(<span class="attr">#[<span class="macro-nonterminal">$meta</span>:meta]</span>)*
+        <span class="macro-nonterminal">$vis</span>:vis <span class="kw">enum </span><span class="macro-nonterminal">$name</span>:ident {
+            <span class="macro-nonterminal">$first_variant</span>:ident(<span class="macro-nonterminal">$first_type</span>:ty), <span class="macro-nonterminal">$first_from_name</span>:ident, <span class="macro-nonterminal">$first_as_name</span>:ident, <span class="macro-nonterminal">$first_unwrap_name</span>:ident $(;)<span class="question-mark">?
+            </span>$(<span class="macro-nonterminal">$variant</span>:ident(<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>), <span class="macro-nonterminal">$from_name</span>:ident, <span class="macro-nonterminal">$as_name</span>:ident, <span class="macro-nonterminal">$unwrap_name</span>:ident);* $(;)<span class="question-mark">?
+        </span>}
+    ) =&gt; { ... };
+    (
+        @recursion_logic,
+        <span class="macro-nonterminal">$vis</span>:vis,
+        $(,)<span class="question-mark">? </span>$(<span class="macro-nonterminal">$prev_variant</span>:ident),* $(,)<span class="question-mark">?</span>;
+        <span class="macro-nonterminal">$this_variant</span>:ident(<span class="macro-nonterminal">$this_type</span>:ty), <span class="macro-nonterminal">$this_from_name</span>:ident, <span class="macro-nonterminal">$this_as_name</span>:ident, <span class="macro-nonterminal">$this_unwrap_name</span>:ident $(;)<span class="question-mark">?
+        </span>$(<span class="macro-nonterminal">$next_variant</span>:ident(<span class="macro-nonterminal">$next_type</span>:ty), <span class="macro-nonterminal">$next_from_name</span>:ident, <span class="macro-nonterminal">$next_as_name</span>:ident, <span class="macro-nonterminal">$next_unwrap_name</span>:ident);*
+    ) =&gt; { ... };
+    (
+        @recursion_logic,
+        <span class="macro-nonterminal">$vis</span>:vis,
+        $(<span class="macro-nonterminal">$prev_variant</span>:ident),<span class="kw-2">*</span>;
+    ) =&gt; { ... };
+    (
+        @render_members,
+        <span class="macro-nonterminal">$vis</span>:vis,
+        <span class="macro-nonterminal">$from_name</span>:ident, <span class="macro-nonterminal">$as_name</span>:ident, <span class="macro-nonterminal">$unwrap_name</span>:ident;
+        $(<span class="macro-nonterminal">$prev_variant</span>:ident),<span class="kw-2">*</span>;
+        <span class="macro-nonterminal">$variant</span>:ident(<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>);
+        $(<span class="macro-nonterminal">$next_variant</span>:ident),<span class="kw-2">*</span>;
+    ) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro that allows generation of an easy to use enum for dealing with many different possible versions of a COM object.</p>
+<p>Give the variants so that parents come before children. This often manifests as going up in order (1 -&gt; 2 -&gt; 3). This is vital for safety.</p>
+<p>Three function names need to be attached to each variant. The examples are given for the MyComObject1 variant below:</p>
+<ul>
+<li>the from function (<code>ComPtr&lt;actual::ComObject1&gt; -&gt; Self</code>)</li>
+<li>the as function (<code>&amp;self -&gt; Option&lt;ComPtr&lt;actual::ComObject1&gt;&gt;</code>)</li>
+<li>the unwrap function (<code>&amp;self -&gt; ComPtr&lt;actual::ComObject1&gt;</code> panicing on failure to cast)</li>
+</ul>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="macro">weak_com_inheritance_chain! </span>{
+    <span class="kw">pub enum </span>MyComObject {
+        MyComObject(actual::ComObject), from_my_com_object, as_my_com_object, my_com_object; <span class="comment">// First variant doesn&#39;t use &quot;unwrap&quot; as it can never fail
+        </span>MyComObject1(actual::ComObject1), from_my_com_object1, as_my_com_object1, unwrap_my_com_object1;
+        MyComObject2(actual::ComObject2), from_my_com_object2, as_my_com_object2, unwrap_my_com_object2;
+    }
+}</code></pre></div>
+</div></details></section></div></main></body></html>

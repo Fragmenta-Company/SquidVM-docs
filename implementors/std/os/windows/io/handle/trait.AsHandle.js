@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"polling":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.74.1/std/os/windows/io/handle/trait.AsHandle.html\" title=\"trait std::os::windows::io::handle::AsHandle\">AsHandle</a> for <a class=\"struct\" href=\"polling/struct.Poller.html\" title=\"struct polling::Poller\">Poller</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

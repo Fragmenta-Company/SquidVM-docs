@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"async_io":[["impl&lt;T: <a class=\"trait\" href=\"https://doc.rust-lang.org/1.74.1/std/os/windows/io/socket/trait.AsSocket.html\" title=\"trait std::os::windows::io::socket::AsSocket\">AsSocket</a>&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.74.1/std/os/windows/io/socket/trait.AsSocket.html\" title=\"trait std::os::windows::io::socket::AsSocket\">AsSocket</a> for <a class=\"struct\" href=\"async_io/struct.Async.html\" title=\"struct async_io::Async\">Async</a>&lt;T&gt;"]],
+"rustix":[]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

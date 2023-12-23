@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro for generating COM interface definitions."><title>com_interface in com_rs - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="com_rs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.1 (a28077b28 2023-12-04)" data-channel="1.74.1" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc macro"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../com_rs/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a></nav><nav class="sidebar"><a class="logo-container" href="../com_rs/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><div class="sidebar-elems"><h2><a href="index.html">In com_rs</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Macro <a href="index.html">com_rs</a>::<wbr><a class="macro" href="#">com_interface</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/com_rs/macros.rs.html#78-152">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><span class="macro">macro_rules! </span>com_interface {
+    (
+        $(<span class="attr">#[<span class="macro-nonterminal">$iface_attr</span>:meta]</span>)*
+        interface <span class="macro-nonterminal">$iface</span>:ident: <span class="macro-nonterminal">$base_iface</span>:ty {
+            iid: <span class="macro-nonterminal">$iid</span>:ident,
+            vtable: <span class="macro-nonterminal">$vtable</span>:ident,
+            $(
+                $(<span class="attr">#[<span class="macro-nonterminal">$fn_attr</span>:meta]</span>)*
+                <span class="kw">fn </span><span class="macro-nonterminal">$func</span>:ident($(<span class="macro-nonterminal">$i</span>:ident: <span class="macro-nonterminal">$t</span>:ty),<span class="kw-2">*</span>) -&gt; <span class="macro-nonterminal">$rt</span>:ty;
+            )*
+        }
+    ) =&gt; { ... };
+    (
+        $(<span class="attr">#[<span class="macro-nonterminal">$iface_attr</span>:meta]</span>)*
+        interface <span class="macro-nonterminal">$iface</span>:ident: <span class="macro-nonterminal">$base_iface</span>:ty, $(<span class="macro-nonterminal">$extra_base</span>:ty),+ {
+            iid: <span class="macro-nonterminal">$iid</span>:ident,
+            vtable: <span class="macro-nonterminal">$vtable</span>:ident,
+            $(
+                $(<span class="attr">#[<span class="macro-nonterminal">$fn_attr</span>:meta]</span>)*
+                <span class="kw">fn </span><span class="macro-nonterminal">$func</span>:ident($(<span class="macro-nonterminal">$i</span>:ident: <span class="macro-nonterminal">$t</span>:ty),<span class="kw-2">*</span>) -&gt; <span class="macro-nonterminal">$rt</span>:ty;
+            )*
+        }
+    ) =&gt; { ... };
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro for generating COM interface definitions.</p>
+<h2 id="usage"><a href="#usage">Usage</a></h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[macro_use]
+</span><span class="kw">extern crate </span>com_rs;
+<span class="kw">use </span>com_rs::IUnknown;
+
+<span class="macro">iid!</span>(IID_IFOO =
+    <span class="number">0x12345678</span>, <span class="number">0x90AB</span>, <span class="number">0xCDEF</span>, <span class="number">0x12</span>, <span class="number">0x34</span>, <span class="number">0x56</span>, <span class="number">0x78</span>, <span class="number">0x90</span>, <span class="number">0xAB</span>, <span class="number">0xCD</span>, <span class="number">0xEF</span>);
+
+<span class="macro">com_interface! </span>{
+    interface IFoo: IUnknown {
+        iid: IID_IFOO,
+        vtable: IFooVtbl,
+        <span class="kw">fn </span>foo() -&gt; bool;
+    }
+}</code></pre></div>
+<p>This example defines an interface called <code>IFoo</code>. In this case, the base type is
+IUnknown, the root COM type. The IID for the interface must also be defined,
+along with the name of the vtable type, <code>IFooVtbl</code>. This isn’t publicly exposed,
+but there is currently no way to generate an ident within a macro so the callee
+must define one instead.</p>
+<p>The trait <code>Foo</code> defines the methods available for the interface, in this case
+a single method named <code>foo</code>. Note that any methods that return no value
+(e.g. the <code>void</code> type in C/C++) should return the unit type <code>()</code>.</p>
+<h3 id="inheritance"><a href="#inheritance">Inheritance</a></h3>
+<p>To define interfaces with a deeper hierarchy, add additional parent identifiers
+to the type definitions. e.g:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="macro">iid!</span>(IID_IBAR =
+    <span class="number">0x12345678</span>, <span class="number">0x90AB</span>, <span class="number">0xCDEF</span>, <span class="number">0x12</span>, <span class="number">0x34</span>, <span class="number">0x56</span>, <span class="number">0x78</span>, <span class="number">0x90</span>, <span class="number">0xAB</span>, <span class="number">0xCD</span>, <span class="number">0xEF</span>);
+<span class="macro">com_interface! </span>{
+    interface IBar: IFoo, IUnknown {
+        iid: IID_IBAR,
+        vtable: IBarVtbl,
+        <span class="kw">fn </span>bar(baz: i32) -&gt; ();
+    }
+}</code></pre></div>
+<p>This example defines an interface called <code>IBar</code> which extends <code>IFoo</code> from the
+previous example. Note that it is necessary to specify the parent types
+for both the interface and trait declarations.</p>
+<p>The interface hierarchy automates pointer conversion using the <code>AsComPtr</code> trait,
+and the trait hierarchy automatically implements the parent methods for the
+child interface.</p>
+</div></details></section></div></main></body></html>

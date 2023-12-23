@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Dxc","DxcBlob","DxcBlobEncoding","DxcCompiler","DxcLibrary","DxcOperationResult","DxcReflector","DxcValidator","Dxil","Reflection"],"trait":["DxcIncludeHandler"],"type":["DxcValidatorVersion"]};

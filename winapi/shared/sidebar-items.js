@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["basetsd","cfg","d3d9types","dcomptypes","devpropdef","dxgi","dxgi1_2","dxgi1_3","dxgi1_4","dxgi1_5","dxgi1_6","dxgiformat","dxgitype","guiddef","in6addr","inaddr","ktmtypes","minwindef","mstcpip","ntdef","ntstatus","qos","rpc","rpcdce","rpcndr","windef","winerror","ws2def","ws2ipdef","wtypes","wtypesbase"]};

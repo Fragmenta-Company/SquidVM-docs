@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"type":["D2D_COLOR_F"]};

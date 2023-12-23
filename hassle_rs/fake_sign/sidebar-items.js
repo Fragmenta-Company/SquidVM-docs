@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["fake_sign_dxil_in_place"]};
