@@ -135,6 +135,21 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::mem;
 
 <span class="doccomment">/// ## Immediates are the objects types containing the value inside them
@@ -156,6 +171,8 @@
     </span>Binary(Vec&lt;u8&gt;),
     <span class="doccomment">/// Array of Immediates type
     </span>Array(Vec&lt;Immediates&gt;),
+    <span class="doccomment">/// Pointer/reference to a address or object in the heap
+    </span>RefPtr(usize)
 }
 
 <span class="doccomment">/// ## ImmediatesType are the objects types NOT containing the value inside them, just the type.
@@ -177,6 +194,8 @@
     </span>Binary,
     <span class="doccomment">/// Array of Immediates type
     </span>Array,
+    <span class="doccomment">/// Reference/Pointer type
+    </span>RefPtr
 }
 
 <span class="doccomment">/// ## Creates a function to serialize Immediates to sequences of bytes
@@ -204,6 +223,7 @@
             Immediates::String(<span class="kw">_</span>) =&gt; ImmediatesType::String,
             Immediates::Binary(<span class="kw">_</span>) =&gt; ImmediatesType::Binary,
             Immediates::Array(<span class="kw">_</span>) =&gt; ImmediatesType::Array,
+            Immediates::RefPtr(<span class="kw">_</span>) =&gt; ImmediatesType::RefPtr
         }
     }
 }
@@ -242,6 +262,11 @@
             Immediates::Array(<span class="kw">_</span>) =&gt; {
                 <span class="macro">panic!</span>(<span class="string">&quot;Array not permited for instance&quot;</span>);
             }
+            Immediates::RefPtr(u) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>bytes = <span class="macro">vec!</span>[<span class="number">0u8</span>; mem::size_of::&lt;Immediates&gt;()];
+                bytes.copy_from_slice(<span class="kw-2">&amp;</span>u.to_le_bytes());
+                bytes
+            }
         }
     }
 
@@ -268,6 +293,11 @@
             Immediates::Binary(bin) =&gt; bin.clone(),
             Immediates::Array(<span class="kw">_</span>) =&gt; {
                 <span class="macro">panic!</span>(<span class="string">&quot;Array not permitted for instance&quot;</span>);
+            }
+            Immediates::RefPtr(u) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>bytes = <span class="macro">vec!</span>[<span class="number">0u8</span>; mem::size_of::&lt;usize&gt;()];
+                bytes.copy_from_slice(<span class="kw-2">&amp;</span>u.to_le_bytes());
+                bytes
             }
         }
     }

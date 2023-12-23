@@ -98,6 +98,10 @@
 <a href="#98" id="98">98</a>
 <a href="#99" id="99">99</a>
 <a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>clap::Parser;
 
 <span class="doccomment">/// Argument Parser
@@ -137,6 +141,10 @@
     <span class="doccomment">/// Shows the SquidVM version | SquidVM |major|.|minor|.|patch|-|details| for |OS| |arch|
     </span><span class="attr">#[arg(long, short = <span class="string">&#39;V&#39;</span>)]
     </span><span class="kw">pub </span>version: bool,
+
+    <span class="doccomment">/// Shows newer versions if detected
+    </span><span class="attr">#[arg(long, visible_alias = <span class="string">&quot;cnv&quot;</span>)]
+    </span><span class="kw">pub </span>check_updates: bool,
 }
 
 <span class="doccomment">/// Converts strings with postfixes (GB, MB, KB or B) into a value in bytes

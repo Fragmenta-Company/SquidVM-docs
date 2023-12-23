@@ -145,6 +145,32 @@
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! &lt;p style=&quot;text-align: center;&quot;&gt;
 //!     &lt;img src=&quot;https://d1drfx3idpovxr.cloudfront.net/squid-vm.svg&quot;
 //!     alt=&quot;SquidVM Logo&quot; width=&quot;250px&quot; /&gt;
@@ -177,10 +203,10 @@
 </span><span class="kw">mod </span>macrodefs;
 
 <span class="doccomment">/// Contains the sqdbin binary files reader implementation
-</span><span class="kw">mod </span>sqdbinreader;
+</span><span class="kw">mod </span>sqdbin_reader;
 
 <span class="doccomment">/// Contains the entirety of the VM internal implementation
-</span><span class="kw">mod </span>vminternals;
+</span><span class="kw">mod </span>vm_internals;
 
 <span class="doccomment">/// Used for cli arguments definintion
 </span><span class="kw">mod </span>argsdef;
@@ -188,30 +214,53 @@
 <span class="doccomment">/// Defines the exit codes/error codes that the program will throw.
 </span><span class="kw">mod </span>errdef;
 <span class="doccomment">/// Module used for reading the Squid ARchives
-</span><span class="kw">mod </span>sarreader;
+</span><span class="kw">mod </span>sar_reader;
 
+<span class="doccomment">/// Module used for getting updates from the GitHub repo.
+</span><span class="kw">mod </span>getup;
 <span class="doccomment">/// Defines all the instructions.
 </span><span class="kw">mod </span>instructiondefs;
 <span class="doccomment">/// Defines the target that show when using `./squid-vm(.exe) --version`
 </span><span class="kw">mod </span>targetdef;
 
 <span class="kw">use </span>argsdef::<span class="kw-2">*</span>;
+<span class="kw">use </span>async_std::task;
 <span class="kw">use </span>clap::Parser;
 <span class="kw">use </span>errdef::<span class="kw-2">*</span>;
-<span class="kw">use </span>sqdbinreader::FileReader;
-<span class="kw">use </span>std::{process};
-<span class="comment">// use std::{process, thread};
-// use std::sync::{Arc, RwLock};
-</span><span class="kw">use </span>targetdef::<span class="kw-2">*</span>;
-<span class="kw">use </span>vminternals::VMStarter;
-<span class="comment">// use crate::vminternals::immediates::Immediates;
-// use crate::vminternals::VMHeap;
+<span class="kw">use </span>sqdbin_reader::FileReader;
+<span class="kw">use </span>std::process;
+<span class="kw">use </span>targetdef::<span class="kw-2">*</span>;
+<span class="kw">use </span>vm_internals::VMStarter;
 
-</span><span class="doccomment">/// Get arguments from the command and creates a VMStarter object.
+<span class="doccomment">/// Contains tools for checking updates, getting current version and others.
+</span><span class="kw">fn </span>version_args(args: <span class="kw-2">&amp;</span>Args) {
+    <span class="kw">if </span>args.check_updates {
+        <span class="macro">println!</span>(<span class="string">&quot;Current version: {}&quot;</span>, <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>));
+
+        getup::get_update().iter().rev().for_each(<span class="kw">move </span>|string| {
+            <span class="macro">println!</span>(<span class="string">&quot;{string}&quot;</span>);
+        });
+
+        process::exit(<span class="number">0</span>);
+    }
+
+    <span class="kw">if </span>args.version {
+        <span class="macro">dev_print!</span>(<span class="string">&quot;---- SVDK ---- ---- SVDK ---- SVDK ---- ---- SVDK ----&quot;</span>);
+        <span class="macro">println!</span>(
+            <span class="string">&quot;{} {} for {}&quot;</span>,
+            VM_NAMING_CONVENTION,
+            <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>),
+            TARGET
+        );
+        <span class="macro">dev_print!</span>(<span class="string">&quot;---- SVDK ---- ---- SVDK ---- SVDK ---- ---- SVDK ----&quot;</span>);
+        process::exit(<span class="number">0</span>);
+    }
+}
+
+<span class="doccomment">/// Get arguments from the command and creates a VMStarter object.
 /// Run vm.interpreter in loop while vm is running.
 /// File is read and converted to VM readble objects before the interpreter starts.
 </span><span class="kw">fn </span>main() {
-
     <span class="comment">// let heap = Arc::new(RwLock::from(VMHeap::new(1024)));
     //
     // let heap_clone1 = Arc::clone(&amp;heap);
@@ -242,17 +291,7 @@
 
     <span class="kw">let </span>args = Args::parse();
 
-    <span class="kw">if </span>args.version {
-        <span class="macro">dev_print!</span>(<span class="string">&quot;---- SVDK ---- ---- SVDK ---- SVDK ---- ---- SVDK ----&quot;</span>);
-        <span class="macro">println!</span>(
-            <span class="string">&quot;{} {} for {}&quot;</span>,
-            VM_NAMING_CONVENTION,
-            <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>),
-            TARGET
-        );
-        <span class="macro">dev_print!</span>(<span class="string">&quot;---- SVDK ---- ---- SVDK ---- SVDK ---- ---- SVDK ----&quot;</span>);
-        process::exit(<span class="number">0</span>);
-    }
+    version_args(<span class="kw-2">&amp;</span>args);
 
     <span class="kw">match </span>string_to_bytesize(args.maxmem) {
         <span class="prelude-val">Ok</span>(mem) =&gt; {
@@ -288,6 +327,19 @@
         <span class="kw">while </span>vm.running {
             vm.interpreter(fileread.clone());
         }
+    }
+
+    <span class="kw">if </span>vm.handlers.len() &gt; <span class="number">0 </span>{
+        task::block_on(<span class="kw">async </span>{
+            <span class="kw">for </span>task <span class="kw">in </span>vm.handlers {
+                <span class="kw">match </span>task.<span class="kw">await </span>{
+                    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
+                    <span class="prelude-val">Err</span>(err) =&gt; {
+                        <span class="macro">eprintln!</span>(<span class="string">&quot;Handler error: \x1B[41m{}\x1B[0m&quot;</span>, err);
+                    }
+                };
+            }
+        });
     }
 
     <span class="macro">dev_print!</span>(<span class="string">&quot;Exiting...&quot;</span>);

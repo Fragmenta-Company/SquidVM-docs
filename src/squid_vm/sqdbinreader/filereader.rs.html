@@ -589,7 +589,7 @@
                             </span><span class="kw">if </span>major &gt; VM_MAJOR.parse().unwrap() {
                                 <span class="bool-val">true
                             </span>} <span class="kw">else if </span>minor &gt; VM_MINOR.parse().unwrap()
-                                &amp;&amp; major == VM_MAJOR.parse().unwrap()
+                                &amp;&amp; major == VM_MAJOR.parse::&lt;u32&gt;().unwrap()
                             {
                                 <span class="comment">// Binary major is equal to VM&#39;s, but minor is higher
                                 </span><span class="bool-val">true

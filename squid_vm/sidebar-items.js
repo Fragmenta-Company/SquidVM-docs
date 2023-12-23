@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["VM_NAMING_CONVENTION"],"fn":["main"],"macro":["dev_print"],"mod":["argsdef","errdef","instructiondefs","macrodefs","sarreader","sqdbinreader","targetdef","vminternals"]};
+window.SIDEBAR_ITEMS = {"constant":["VM_NAMING_CONVENTION"],"fn":["main","version_args"],"macro":["dev_print"],"mod":["argsdef","errdef","getup","instructiondefs","macrodefs","sar_reader","sqdbin_reader","targetdef","vm_internals"]};

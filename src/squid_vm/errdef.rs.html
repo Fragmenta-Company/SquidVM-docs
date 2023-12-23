@@ -9,14 +9,29 @@
 <a href="#9" id="9">9</a>
 <a href="#10" id="10">10</a>
 <a href="#11" id="11">11</a>
+<a href="#12" id="12">12</a>
+<a href="#13" id="13">13</a>
+<a href="#14" id="14">14</a>
+<a href="#15" id="15">15</a>
+<a href="#16" id="16">16</a>
+<a href="#17" id="17">17</a>
+<a href="#18" id="18">18</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// If no argument is passed this error code is thrown.
 </span><span class="kw">pub const </span>ARG_MISSING_ERR: i32 = <span class="number">3</span>;
 
 <span class="doccomment">/// Error that happens when the argument passed for maxmem fails to be converted.
 </span><span class="kw">pub const </span>MAXMEM_CONVERSION_ERR: i32 = <span class="number">4</span>;
 
-<span class="kw">pub const </span>METADATA_ERR: i32 = <span class="number">5</span>;
+<span class="doccomment">/// Error while evaluating metadata from file.
+</span><span class="kw">pub const </span>METADATA_ERR: i32 = <span class="number">5</span>;
 
-<span class="kw">pub const </span>FILE_DATA_ERR: i32 = <span class="number">6</span>;
+<span class="doccomment">/// Error while reading file.
+</span><span class="kw">pub const </span>FILE_DATA_ERR: i32 = <span class="number">6</span>;
 
-<span class="kw">pub const </span>HEAP_ALLOC_ERR: i32 = <span class="number">2</span>;</code></pre></div></section></main></body></html>
+<span class="doccomment">/// Error that happens when trying to allocate something to the heap.
+</span><span class="kw">pub const </span>HEAP_ALLOC_ERR: i32 = <span class="number">2</span>;
+
+<span class="doccomment">/// Error that happens when trying to check for updates.
+/// Error out while trying to get latest update or while trying to parse JSON.
+</span><span class="kw">pub const </span>UPDATE_CHECK_ERR: i32 = <span class="number">7</span>;
+</code></pre></div></section></main></body></html>
